@@ -1,0 +1,342 @@
+<div class="calculadora-nss-container">
+  <!-- Header -->
+  <header class="calculator-header">
+    <div class="header-content">
+      <div class="header-left">
+        <!-- <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button> -->
+        <div class="header-title">
+          <h1>Calculadora de NSS</h1>
+          <p>Valida y genera números de seguridad social</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- <button class="export-button" (click)="exportResults()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button> -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="calculator-main">
+    <div class="calculator-grid">
+      <!-- Forms Section -->
+      <div class="forms-section">
+        <!-- NSS Validation Form -->
+        <div class="form-card">
+          <div class="form-header">
+            <i class="fas fa-search"></i>
+            <h3>Validar NSS</h3>
+          </div>
+          
+          <form [formGroup]="nssForm" (ngSubmit)="validateNSS()">
+            <div class="form-group">
+              <label for="nssNumber">Número de Seguridad Social *</label>
+              <div class="input-container">
+                <i class="fas fa-id-card"></i>
+                <input 
+                  type="text" 
+                  id="nssNumber"
+                  formControlName="nssNumber"
+                  placeholder="12345678901"
+                  maxlength="11"
+                  pattern="[0-9]*"
+                >
+              </div>
+              <div class="error-message" *ngIf="nssForm.get('nssNumber')?.invalid && nssForm.get('nssNumber')?.touched">
+                <span>El NSS debe tener exactamente 11 dígitos numéricos</span>
+              </div>
+              <small class="form-help">Ingresa el NSS de 11 dígitos para validar su estructura</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="nssForm.invalid">
+                <i class="fas fa-check-circle"></i>
+                <span>Validar NSS</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetValidation()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- NSS Generator Form -->
+        <div class="form-card">
+          <div class="form-header">
+            <i class="fas fa-plus-circle"></i>
+            <h3>Generar NSS</h3>
+          </div>
+          
+          <form [formGroup]="nssGeneratorForm" (ngSubmit)="generateNSS()">
+            <div class="form-section">
+              <h4>Información Personal</h4>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">Nombre *</label>
+                  <div class="input-container">
+                    <i class="fas fa-user"></i>
+                    <input 
+                      type="text" 
+                      id="firstName"
+                      formControlName="firstName"
+                      placeholder="Juan"
+                    >
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="lastName">Apellido Paterno *</label>
+                  <div class="input-container">
+                    <i class="fas fa-user"></i>
+                    <input 
+                      type="text" 
+                      id="lastName"
+                      formControlName="lastName"
+                      placeholder="Pérez"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="motherLastName">Apellido Materno *</label>
+                <div class="input-container">
+                  <i class="fas fa-user"></i>
+                  <input 
+                    type="text" 
+                    id="motherLastName"
+                    formControlName="motherLastName"
+                    placeholder="García"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>Fecha de Nacimiento</h4>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="year">Año *</label>
+                  <div class="input-container">
+                    <i class="fas fa-calendar"></i>
+                    <input 
+                      type="number" 
+                      id="year"
+                      formControlName="year"
+                      placeholder="1990"
+                      min="1900"
+                      max="2100"
+                    >
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="month">Mes *</label>
+                  <div class="input-container">
+                    <i class="fas fa-calendar"></i>
+                    <select id="month" formControlName="month">
+                      <option value="1">Enero</option>
+                      <option value="2">Febrero</option>
+                      <option value="3">Marzo</option>
+                      <option value="4">Abril</option>
+                      <option value="5">Mayo</option>
+                      <option value="6">Junio</option>
+                      <option value="7">Julio</option>
+                      <option value="8">Agosto</option>
+                      <option value="9">Septiembre</option>
+                      <option value="10">Octubre</option>
+                      <option value="11">Noviembre</option>
+                      <option value="12">Diciembre</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="day">Día *</label>
+                  <div class="input-container">
+                    <i class="fas fa-calendar"></i>
+                    <input 
+                      type="number" 
+                      id="day"
+                      formControlName="day"
+                      placeholder="15"
+                      min="1"
+                      max="31"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>Información Adicional</h4>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="gender">Género *</label>
+                  <div class="input-container">
+                    <i class="fas fa-venus-mars"></i>
+                    <select id="gender" formControlName="gender">
+                      <option value="M">Masculino</option>
+                      <option value="F">Femenino</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="subdelegacion">Subdelegación *</label>
+                  <div class="input-container">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <select id="subdelegacion" formControlName="subdelegacion">
+                      <option *ngFor="let sub of SUBDELEGACIONES" [value]="sub.code">
+                        {{ sub.code }} - {{ sub.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="nssGeneratorForm.invalid">
+                <i class="fas fa-magic"></i>
+                <span>Generar NSS</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetGenerator()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section" *ngIf="nssResults.length > 0">
+        <div class="results-header">
+          <h3>Resultados del NSS</h3>
+          <div class="results-actions">
+            <button class="btn-toggle" (click)="toggleValidation()" *ngIf="showValidation">
+              <i class="fas" [class.fa-eye]="!showValidation" [class.fa-eye-slash]="showValidation"></i>
+              <span>{{ showValidation ? 'Ocultar' : 'Mostrar' }} Validación</span>
+            </button>
+            <button class="btn-toggle" (click)="toggleGenerator()" *ngIf="showGenerator">
+              <i class="fas fa-copy"></i>
+              <span>Copiar NSS</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main NSS Display -->
+        <div class="nss-display" *ngIf="nssResults[0]">
+          <div class="nss-card">
+            <div class="nss-icon">
+              <i class="fas fa-id-card"></i>
+            </div>
+            <div class="nss-content">
+              <h4>Número de Seguridad Social</h4>
+              <div class="nss-number">{{ formatNSS(nssResults[0].value) }}</div>
+              <button class="copy-button" (click)="copyToClipboard(nssResults[0].value)">
+                <i class="fas fa-copy"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Validation Results -->
+        <div class="validation-section" *ngIf="showValidation && nssValidation">
+          <h4>Resultados de Validación</h4>
+          
+          <div class="validation-status" [class.valid]="nssValidation.isValid" [class.invalid]="!nssValidation.isValid">
+            <i class="fas" [class.fa-check-circle]="nssValidation.isValid" [class.fa-times-circle]="!nssValidation.isValid"></i>
+            <span>{{ nssValidation.isValid ? 'NSS Válido' : 'NSS Inválido' }}</span>
+          </div>
+
+          <div class="validation-errors" *ngIf="nssValidation.errors.length > 0">
+            <h5>Errores Encontrados:</h5>
+            <ul>
+              <li *ngFor="let error of nssValidation.errors">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>{{ error }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="validation-warnings" *ngIf="nssValidation.warnings.length > 0">
+            <h5>Advertencias:</h5>
+            <ul>
+              <li *ngFor="let warning of nssValidation.warnings">
+                <i class="fas fa-info-circle"></i>
+                <span>{{ warning }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- NSS Breakdown -->
+        <div class="breakdown-section">
+          <h4>Desglose del NSS</h4>
+          <div class="breakdown-grid">
+            <div class="breakdown-item" *ngFor="let result of nssResults.slice(1)" [class]="'breakdown-' + result.color">
+              <div class="breakdown-label">{{ result.label }}</div>
+              <div class="breakdown-value">{{ result.value }}</div>
+              <div class="breakdown-description" *ngIf="result.description">{{ result.description }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NSS Structure Info -->
+        <div class="structure-info">
+          <h4>Estructura del NSS</h4>
+          <div class="structure-diagram">
+            <div class="structure-item">
+              <span class="structure-label">Subdelegación</span>
+              <span class="structure-digits">XX</span>
+              <span class="structure-desc">2 dígitos</span>
+            </div>
+            <div class="structure-item">
+              <span class="structure-label">Año</span>
+              <span class="structure-digits">YYYY</span>
+              <span class="structure-desc">4 dígitos</span>
+            </div>
+            <div class="structure-item">
+              <span class="structure-label">Mes</span>
+              <span class="structure-digits">MM</span>
+              <span class="structure-desc">2 dígitos</span>
+            </div>
+            <div class="structure-item">
+              <span class="structure-label">Día</span>
+              <span class="structure-digits">DD</span>
+              <span class="structure-desc">2 dígitos</span>
+            </div>
+            <div class="structure-item">
+              <span class="structure-label">Género</span>
+              <span class="structure-digits">G</span>
+              <span class="structure-desc">1 dígito</span>
+            </div>
+            <div class="structure-item">
+              <span class="structure-label">Secuencial</span>
+              <span class="structure-digits">S</span>
+              <span class="structure-desc">1 dígito</span>
+            </div>
+            <div class="structure-item">
+              <span class="structure-label">Verificador</span>
+              <span class="structure-digits">V</span>
+              <span class="structure-desc">1 dígito</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

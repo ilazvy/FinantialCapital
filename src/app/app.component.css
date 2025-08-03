@@ -1,0 +1,72 @@
+/* Layout Principal */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+}
+
+/* Contenedor Principal */
+.main-container {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* Área de Contenido */
+.content-area {
+  flex: 1;
+  margin-left: 280px; /* Ancho del sidebar */
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 80px); /* Altura total menos header */
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+/* Cuando el sidebar está colapsado */
+.main-container .sidebar.collapsed + .content-area {
+  margin-left: 80px;
+}
+
+/* Páginas sin Layout */
+.full-page {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-area {
+    margin-left: 80px; /* Sidebar colapsado en tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  .content-area {
+    margin-left: 0; /* Sin sidebar en móviles */
+    padding: 15px;
+  }
+  
+  .main-container {
+    flex-direction: column;
+  }
+}
+
+/* Scrollbar personalizado */
+.content-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}

@@ -1,0 +1,229 @@
+<div class="admin-panel-container">
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="header-content">
+      <div class="header-left">
+        <!-- <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button> -->
+        <div class="header-title">
+          <h1>Panel Administrativo</h1>
+          <p>Gestión de gastos, ingresos y pagos</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="export-button" (click)="exportData()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Statistics Overview -->
+  <section class="stats-overview">
+    <div class="stats-grid">
+      <div class="stat-card total-expenses">
+        <div class="stat-icon">
+          <i class="fas fa-minus-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Total Gastos</h3>
+          <p class="stat-amount">{{ formatCurrency(totalExpenses) }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card total-income">
+        <div class="stat-icon">
+          <i class="fas fa-plus-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Total Ingresos</h3>
+          <p class="stat-amount">{{ formatCurrency(totalIncome) }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card total-payments">
+        <div class="stat-icon">
+          <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Total Pagos</h3>
+          <p class="stat-amount">{{ formatCurrency(totalPayments) }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card net-profit">
+        <div class="stat-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Ganancia Neta</h3>
+          <p class="stat-amount" [class.positive]="netProfit >= 0" [class.negative]="netProfit < 0">
+            {{ formatCurrency(netProfit) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+      <h3>Acciones Rápidas</h3>
+      <div class="actions-grid">
+        <div class="action-card" (click)="navigateToForm('expenses')">
+          <div class="action-icon">
+            <i class="fas fa-minus-circle"></i>
+          </div>
+          <div class="action-content">
+            <h4>Registrar Gasto</h4>
+            <p>Agregar nuevo gasto al sistema</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="navigateToForm('income')">
+          <div class="action-icon">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div class="action-content">
+            <h4>Registrar Ingreso</h4>
+            <p>Agregar nuevo ingreso al sistema</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="navigateToForm('payments')">
+          <div class="action-icon">
+            <i class="fas fa-money-bill-wave"></i>
+          </div>
+          <div class="action-content">
+            <h4>Registrar Pago</h4>
+            <p>Realizar pago a empleado o proveedor</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="navigateToEmployees()">
+          <div class="action-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="action-content">
+            <h4>Gestionar Empleados</h4>
+            <p>Administrar información de empleados</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="recent-transactions">
+      <div class="section-header">
+        <h3>Transacciones Recientes</h3>
+        <div class="section-actions">
+          <button class="btn-filter" (click)="toggleFilters()">
+            <i class="fas fa-filter"></i>
+            <span>Filtros</span>
+          </button>
+          <button class="btn-refresh" (click)="refreshData()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Actualizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section" *ngIf="showFilters">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label>Tipo</label>
+            <select [(ngModel)]="selectedType">
+              <option value="">Todos</option>
+              <option value="expense">Gastos</option>
+              <option value="income">Ingresos</option>
+              <option value="payment">Pagos</option>
+              <option value="severance">Finiquitos</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Fecha Desde</label>
+            <input type="date" [(ngModel)]="dateFrom">
+          </div>
+          
+          <div class="filter-group">
+            <label>Fecha Hasta</label>
+            <input type="date" [(ngModel)]="dateTo">
+          </div>
+          
+          <div class="filter-group">
+            <label>Monto Mínimo</label>
+            <input type="number" [(ngModel)]="minAmount" placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions List -->
+      <div class="transactions-list">
+        <div class="transaction-item" *ngFor="let transaction of filteredTransactions" [class]="'transaction-' + transaction.type">
+          <div class="transaction-icon">
+            <i [class]="getTransactionIcon(transaction.type)"></i>
+          </div>
+          
+          <div class="transaction-details">
+            <h4>{{ transaction.description }}</h4>
+            <p>{{ getCategoryLabel(transaction.type, transaction.category) }} • {{ formatDate(transaction.date) }}</p>
+            <span class="transaction-reference" *ngIf="transaction.reference">
+              Ref: {{ transaction.reference }}
+            </span>
+          </div>
+          
+          <div class="transaction-amount">
+            <span class="amount"
+                  [class.positive]="transaction.type === 'income'"
+                  [class.negative]="transaction.type === 'expense' || transaction.type === 'severance'">
+              {{ (transaction.type === 'expense' || transaction.type === 'severance') ? '-' : '+' }}{{ formatCurrency(transaction.amount) }}
+            </span>
+            <span class="status" [class]="'status-' + transaction.status">
+              {{ getStatusText((transaction.status || '').toLowerCase(), transaction.type) }}
+            </span>
+          </div>
+          
+          <div class="transaction-actions">
+            <button class="btn-action" (click)="viewTransaction(transaction)" title="Ver detalles">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn-action" (click)="editTransaction(transaction)" title="Editar">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-action danger" (click)="deleteTransaction(transaction)" title="Eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="no-transactions" *ngIf="filteredTransactions.length === 0">
+          <i class="fas fa-inbox"></i>
+          <p>No hay transacciones para mostrar</p>
+          <button class="btn-primary" (click)="navigateToForm('expenses')">
+            <i class="fas fa-plus"></i>
+            <span>Registrar Primera Transacción</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

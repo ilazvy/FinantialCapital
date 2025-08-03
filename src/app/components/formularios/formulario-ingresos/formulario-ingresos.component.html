@@ -1,0 +1,285 @@
+<div class="formulario-ingresos-container">
+  <!-- Header -->
+  <header class="form-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-title">
+          <h1>Registro de Ingresos</h1>
+          <p>Gestiona los ingresos y entradas de capital</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="export-button" (click)="exportIncomes()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Income Summary -->
+  <div class="income-summary">
+    <div class="summary-card">
+      <div class="summary-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <div class="summary-content">
+          <h3>Total Recibido</h3>
+          <p>{{ formatCurrency(calculateTotalIncome()) }}</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <i class="fas fa-clock"></i>
+        <div class="summary-content">
+          <h3>Pendiente</h3>
+          <p>{{ formatCurrency(calculatePendingIncome()) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="form-main">
+    <div class="form-grid">
+      <!-- Income Form -->
+      <div class="form-section">
+        <div class="form-card">
+          <div class="form-card-header">
+            <i class="fas fa-plus-circle"></i>
+            <h3>Nuevo Ingreso</h3>
+          </div>
+          
+          <form [formGroup]="incomeForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="description">Descripción del Ingreso *</label>
+              <div class="input-container">
+                <i class="fas fa-comment"></i>
+                <textarea 
+                  id="description"
+                  formControlName="description"
+                  placeholder="Describe detalladamente el ingreso"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="error-message" *ngIf="incomeForm.get('description')?.invalid && incomeForm.get('description')?.touched">
+                <span>La descripción debe tener al menos 10 caracteres</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="amount">Monto *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="amount"
+                    formControlName="amount"
+                    placeholder="0.00"
+                    min="0.01"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="incomeForm.get('amount')?.invalid && incomeForm.get('amount')?.touched">
+                  <span>El monto debe ser mayor a 0</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="date">Fecha de Ingreso *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar"></i>
+                  <input 
+                    type="date" 
+                    id="date"
+                    formControlName="date"
+                  >
+                </div>
+                <div class="error-message" *ngIf="incomeForm.get('date')?.invalid && incomeForm.get('date')?.touched">
+                  <span>Selecciona una fecha</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="category">Categoría *</label>
+                <div class="input-container">
+                  <i class="fas fa-tag"></i>
+                  <select id="category" formControlName="category">
+                    <option *ngFor="let category of incomeCategories" [value]="category.value">
+                      {{ category.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="source">Fuente *</label>
+                <div class="input-container">
+                  <i class="fas fa-user"></i>
+                  <select id="source" formControlName="source">
+                    <option *ngFor="let source of incomeSources" [value]="source.value">
+                      {{ source.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="paymentMethod">Método de Pago *</label>
+                <div class="input-container">
+                  <i class="fas fa-credit-card"></i>
+                  <select id="paymentMethod" formControlName="paymentMethod">
+                    <option *ngFor="let method of paymentMethods" [value]="method.value">
+                      {{ method.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reference">Referencia</label>
+                <div class="input-container">
+                  <i class="fas fa-hashtag"></i>
+                  <input 
+                    type="text" 
+                    id="reference"
+                    formControlName="reference"
+                    placeholder="Número de referencia"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Notas Adicionales</label>
+              <div class="input-container">
+                <i class="fas fa-sticky-note"></i>
+                <textarea 
+                  id="notes"
+                  formControlName="notes"
+                  placeholder="Información adicional sobre el ingreso"
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="isRecurring">
+                <span>Ingreso Recurrente</span>
+              </label>
+              <small>Marcar si este ingreso se repite periódicamente</small>
+            </div>
+
+            <div class="form-group" *ngIf="incomeForm.get('isRecurring')?.value">
+              <label for="recurringPeriod">Período de Recurrencia</label>
+              <div class="input-container">
+                <i class="fas fa-calendar-alt"></i>
+                <select id="recurringPeriod" formControlName="recurringPeriod">
+                  <option value="weekly">Semanal</option>
+                  <option value="monthly">Mensual</option>
+                  <option value="quarterly">Trimestral</option>
+                  <option value="yearly">Anual</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="incomeForm.invalid">
+                <i class="fas fa-save"></i>
+                <span>Registrar Ingreso</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="incomeForm.reset()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Income History -->
+      <div class="history-section">
+        <div class="history-card">
+          <div class="history-header">
+            <h3>Historial de Ingresos</h3>
+            <div class="history-actions">
+              <button class="btn-toggle" (click)="toggleIncomeHistory()">
+                <i class="fas" [class.fa-eye]="!showIncomeHistory" [class.fa-eye-slash]="showIncomeHistory"></i>
+                <span>{{ showIncomeHistory ? 'Ocultar' : 'Mostrar' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-section">
+            <div class="input-container">
+              <i class="fas fa-search"></i>
+              <input 
+                type="text" 
+                placeholder="Buscar ingresos..."
+                (input)="searchIncomes($event)"
+              >
+            </div>
+          </div>
+
+          <div class="income-list" *ngIf="showIncomeHistory">
+            <div class="income-item" *ngFor="let income of filteredIncomes" [class]="'status-' + getStatusColor(income.status)">
+              <div class="income-header">
+                <div class="income-info">
+                  <h4>{{ income.description }}</h4>
+                  <p>{{ income.notes || 'Sin notas adicionales' }}</p>
+                  <div class="income-meta">
+                    <span class="income-category">{{ getCategoryLabel(income.category) }}</span>
+                    <span class="income-source">{{ getSourceLabel(income.source) }}</span>
+                    <span class="income-method">{{ getPaymentMethodLabel(income.paymentMethod) }}</span>
+                    <span class="income-date">{{ formatDate(income.date) }}</span>
+                  </div>
+                </div>
+                <div class="income-amount">
+                  <span class="amount">{{ formatCurrency(income.amount) }}</span>
+                  <span class="status" [class]="'status-' + getStatusColor(income.status)">
+                    {{ getStatusText(income.status) }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="income-actions">
+                <button 
+                  class="btn-action" 
+                  *ngIf="income.status === 'pending'"
+                  (click)="updateIncomeStatus(income.id, 'received')"
+                  title="Marcar como recibido"
+                >
+                  <i class="fas fa-check"></i>
+                </button>
+                <button 
+                  class="btn-action danger" 
+                  (click)="updateIncomeStatus(income.id, 'cancelled')"
+                  title="Cancelar ingreso"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+                <button 
+                  class="btn-action secondary" 
+                  (click)="deleteIncome(income.id)"
+                  title="Eliminar ingreso"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="no-incomes" *ngIf="filteredIncomes.length === 0">
+              <i class="fas fa-inbox"></i>
+              <p>No se encontraron ingresos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

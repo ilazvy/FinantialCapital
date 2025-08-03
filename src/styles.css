@@ -1,0 +1,138 @@
+body.hide-header-sidebar app-header,
+body.hide-header-sidebar app-sidebar {
+  display: none !important;
+}
+/* You can add global styles to this file, and also import other style files */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+/* Variables globales de colores */
+:root {
+  /* Colores principales de la imagen */
+  --primary-color: #1a1a1a;        /* Negro principal */
+  --secondary-color: #2d2d2d;      /* Negro secundario */
+  --accent-color: #007bff;         /* Azul principal */
+  --accent-hover: #0056b3;         /* Azul hover */
+  
+  /* Colores de texto */
+  --text-dark: #1a1a1a;
+  --text-muted: #6c757d;
+  
+  /* Colores de estado */
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  
+  /* Colores de borde */
+  --border-color: #e9ecef;
+  
+  /* Colores de fondo */
+  --primary-black: #1a1a1a;
+  --secondary-black: #2d2d2d;
+  --primary-gray: #6c757d;
+  --secondary-gray: #495057;
+  --light-gray: #f8f9fa;
+  --primary-blue: #007bff;
+  --secondary-blue: #0056b3;
+  --accent-blue: #17a2b8;
+  --white: #ffffff;
+  --error-red: #dc3545;
+  --success-green: #28a745;
+  --warning-yellow: #ffc107;
+}
+
+/* Estilos para scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-gray);
+}
+
+/* Animaciones globales */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Clases de utilidad */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}

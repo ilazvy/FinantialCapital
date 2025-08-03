@@ -1,0 +1,384 @@
+<div class="calculadora-salario-container">
+  <!-- Header -->
+  <header class="calculator-header">
+    <div class="header-content">
+      <div class="header-left">
+        <!-- <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button> -->
+        <div class="header-title">
+          <h1>Calculadora de Salario</h1>
+          <p>Calcula salarios netos, deducciones y prestaciones laborales</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- <button class="export-button" (click)="exportResults()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button> -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="calculator-main">
+    <div class="calculator-grid">
+      <!-- Form Section -->
+      <div class="calculator-form">
+        <form [formGroup]="salaryForm" (ngSubmit)="calculateSalary()">
+          <!-- Basic Information -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-user-tie"></i>
+              <h3>Información Básica</h3>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="baseSalary">Salario Base Mensual *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="baseSalary"
+                    formControlName="baseSalary"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="salaryForm.get('baseSalary')?.invalid && salaryForm.get('baseSalary')?.touched">
+                  <span>El salario base es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="workDays">Días Trabajados *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar"></i>
+                  <input 
+                    type="number" 
+                    id="workDays"
+                    formControlName="workDays"
+                    placeholder="30"
+                    min="1"
+                    max="31"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="workHours">Horas por Día *</label>
+                <div class="input-container">
+                  <i class="fas fa-clock"></i>
+                  <input 
+                    type="number" 
+                    id="workHours"
+                    formControlName="workHours"
+                    placeholder="8"
+                    min="1"
+                    max="24"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overtime Section -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-clock"></i>
+              <h3>Horas Extra</h3>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="overtimeHours">Horas Extra</label>
+                <div class="input-container">
+                  <i class="fas fa-plus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="overtimeHours"
+                    formControlName="overtimeHours"
+                    placeholder="0"
+                    min="0"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="overtimeRate">Tasa de Horas Extra</label>
+                <div class="input-container">
+                  <i class="fas fa-percentage"></i>
+                  <input 
+                    type="number" 
+                    id="overtimeRate"
+                    formControlName="overtimeRate"
+                    placeholder="1.5"
+                    min="1"
+                    step="0.1"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bonuses and Allowances -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-gift"></i>
+              <h3>Bonos y Prestaciones</h3>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bonuses">Bonos</label>
+                <div class="input-container">
+                  <i class="fas fa-gift"></i>
+                  <input 
+                    type="number" 
+                    id="bonuses"
+                    formControlName="bonuses"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="allowances">Prestaciones</label>
+                <div class="input-container">
+                  <i class="fas fa-hand-holding-usd"></i>
+                  <input 
+                    type="number" 
+                    id="allowances"
+                    formControlName="allowances"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="commissions">Comisiones</label>
+              <div class="input-container">
+                <i class="fas fa-chart-line"></i>
+                <input 
+                  type="number" 
+                  id="commissions"
+                  formControlName="commissions"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Deductions -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-minus-circle"></i>
+              <h3>Deducciones</h3>
+            </div>
+            
+            <div class="form-group">
+              <label for="otherDeductions">Otras Deducciones</label>
+              <div class="input-container">
+                <i class="fas fa-minus-circle"></i>
+                <input 
+                  type="number" 
+                  id="otherDeductions"
+                  formControlName="otherDeductions"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-shield-alt"></i>
+              <h3>Prestaciones Sociales</h3>
+            </div>
+            
+            <div class="benefits-grid">
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasIMSS">
+                  <span>IMSS</span>
+                </label>
+                <small>Instituto Mexicano del Seguro Social</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasINFONAVIT">
+                  <span>INFONAVIT</span>
+                </label>
+                <small>Instituto del Fondo Nacional de la Vivienda</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasSAR">
+                  <span>SAR</span>
+                </label>
+                <small>Sistema de Ahorro para el Retiro</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasISRSubsidy">
+                  <span>Subsidio ISR</span>
+                </label>
+                <small>Subsidio al empleo</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Benefits -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-star"></i>
+              <h3>Prestaciones Adicionales</h3>
+            </div>
+            
+            <div class="benefits-grid">
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasVacationBonus">
+                  <span>Prima Vacacional</span>
+                </label>
+                <small>25% sobre vacaciones</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasChristmasBonus">
+                  <span>Aguinaldo</span>
+                </label>
+                <small>15 días de salario</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasProfitSharing">
+                  <span>PTU</span>
+                </label>
+                <small>Participación en utilidades</small>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="salaryForm.get('hasProfitSharing')?.value">
+              <label for="profitSharingPercentage">Porcentaje PTU (%)</label>
+              <div class="input-container">
+                <i class="fas fa-percentage"></i>
+                <input 
+                  type="number" 
+                  id="profitSharingPercentage"
+                  formControlName="profitSharingPercentage"
+                  placeholder="0"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="salaryForm.invalid">
+              <i class="fas fa-calculator"></i>
+              <span>Calcular Salario</span>
+            </button>
+            <button type="button" class="btn-secondary" (click)="resetCalculator()">
+              <i class="fas fa-undo"></i>
+              <span>Limpiar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Results Section -->
+      <div class="calculator-results" *ngIf="salaryResults.length > 0">
+        <div class="results-header">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-actions">
+            <button class="btn-toggle" (click)="toggleDetails()">
+              <i class="fas" [class.fa-eye]="!showDetails" [class.fa-eye-slash]="showDetails"></i>
+              <span>{{ showDetails ? 'Ocultar' : 'Mostrar' }} Detalles</span>
+            </button>
+            <button class="btn-toggle" (click)="toggleBreakdown()">
+              <i class="fas" [class.fa-chart-pie]="!showBreakdown" [class.fa-chart-bar]="showBreakdown"></i>
+              <span>{{ showBreakdown ? 'Ocultar' : 'Mostrar' }} Desglose</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Results -->
+        <div class="main-results">
+          <div class="result-card primary" *ngIf="salaryResults[3]">
+            <div class="result-icon">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="result-content">
+              <h4>Salario Bruto</h4>
+              <div class="result-value">{{ salaryResults[3].formattedValue }}</div>
+            </div>
+          </div>
+
+          <div class="result-card success" *ngIf="salaryResults[9]">
+            <div class="result-icon">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <div class="result-content">
+              <h4>Salario Neto</h4>
+              <div class="result-value">{{ salaryResults[9].formattedValue }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Results -->
+        <div class="detailed-results" *ngIf="showDetails">
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of salaryResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+              <div class="result-description" *ngIf="result.description">{{ result.description }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Breakdown Chart -->
+        <div class="breakdown-section" *ngIf="showBreakdown && salaryBreakdown.length > 0">
+          <h4>Desglose del Salario</h4>
+          <div class="breakdown-chart">
+            <div class="breakdown-item" *ngFor="let item of salaryBreakdown">
+              <div class="breakdown-header">
+                <div class="breakdown-color" [style.background-color]="item.color"></div>
+                <span class="breakdown-category">{{ item.category }}</span>
+                <span class="breakdown-amount">{{ formatCurrency(item.amount) }}</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" [style.width.%]="item.percentage" [style.background-color]="item.color"></div>
+              </div>
+              <div class="breakdown-percentage">{{ formatPercentage(item.percentage) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,726 @@
+<div class="calculadora-container">
+  <!-- Header -->
+  <header class="calculadora-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button>
+        <div class="header-title">
+          <h1>Calculadoras Financieras</h1>
+          <p>Herramientas especializadas para cálculos financieros y contables</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="export-button" (click)="exportResults()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Calculator Navigation -->
+  <nav class="calculator-nav">
+    <button 
+      class="calc-nav-button" 
+      [class.active]="activeCalculator === 'salary'"
+      (click)="setActiveCalculator('salary')"
+    >
+      <i class="fas fa-calculator"></i>
+      <span>Salario</span>
+    </button>
+    
+    <button 
+      class="calc-nav-button" 
+      [class.active]="activeCalculator === 'tax'"
+      (click)="setActiveCalculator('tax')"
+    >
+      <i class="fas fa-file-invoice-dollar"></i>
+      <span>Impuestos</span>
+    </button>
+    
+    <button 
+      class="calc-nav-button" 
+      [class.active]="activeCalculator === 'loan'"
+      (click)="setActiveCalculator('loan')"
+    >
+      <i class="fas fa-credit-card"></i>
+      <span>Préstamos</span>
+    </button>
+    
+    <button 
+      class="calc-nav-button" 
+      [class.active]="activeCalculator === 'investment'"
+      (click)="setActiveCalculator('investment')"
+    >
+      <i class="fas fa-chart-line"></i>
+      <span>Inversiones</span>
+    </button>
+    
+    <button 
+      class="calc-nav-button" 
+      [class.active]="activeCalculator === 'depreciation'"
+      (click)="setActiveCalculator('depreciation')"
+    >
+      <i class="fas fa-building"></i>
+      <span>Depreciación</span>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="calculadora-main">
+    <!-- Salary Calculator -->
+    <section class="calculator-section" *ngIf="activeCalculator === 'salary'">
+      <div class="section-header">
+        <h2>Calculadora de Salario</h2>
+        <p>Calcula salarios netos, deducciones y prestaciones</p>
+      </div>
+
+      <div class="calculator-grid">
+        <div class="calculator-form">
+          <form [formGroup]="salaryForm" (ngSubmit)="calculateSalary()">
+            <div class="form-section-title">
+              <i class="fas fa-user-tie"></i>
+              <h3>Información del Empleado</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="baseSalary">Salario Base Mensual *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="baseSalary"
+                    formControlName="baseSalary"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="salaryForm.get('baseSalary')?.invalid && salaryForm.get('baseSalary')?.touched">
+                  <span>El salario base es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="workDays">Días Trabajados *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar"></i>
+                  <input 
+                    type="number" 
+                    id="workDays"
+                    formControlName="workDays"
+                    placeholder="30"
+                    min="1"
+                    max="31"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="overtimeHours">Horas Extra</label>
+                <div class="input-container">
+                  <i class="fas fa-clock"></i>
+                  <input 
+                    type="number" 
+                    id="overtimeHours"
+                    formControlName="overtimeHours"
+                    placeholder="0"
+                    min="0"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="overtimeRate">Tasa de Horas Extra</label>
+                <div class="input-container">
+                  <i class="fas fa-percentage"></i>
+                  <input 
+                    type="number" 
+                    id="overtimeRate"
+                    formControlName="overtimeRate"
+                    placeholder="1.5"
+                    min="1"
+                    step="0.1"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bonuses">Bonos</label>
+                <div class="input-container">
+                  <i class="fas fa-gift"></i>
+                  <input 
+                    type="number" 
+                    id="bonuses"
+                    formControlName="bonuses"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="deductions">Otras Deducciones</label>
+                <div class="input-container">
+                  <i class="fas fa-minus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="deductions"
+                    formControlName="deductions"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasIMSS">
+                  <span>Incluir IMSS</span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasINFONAVIT">
+                  <span>Incluir INFONAVIT</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="salaryForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular Salario</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetCalculator()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="calculator-results" *ngIf="salaryResults.length > 0">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of salaryResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tax Calculator -->
+    <section class="calculator-section" *ngIf="activeCalculator === 'tax'">
+      <div class="section-header">
+        <h2>Calculadora de Impuestos (ISR)</h2>
+        <p>Calcula impuestos sobre la renta según las tablas vigentes</p>
+      </div>
+
+      <div class="calculator-grid">
+        <div class="calculator-form">
+          <form [formGroup]="taxForm" (ngSubmit)="calculateTax()">
+            <div class="form-section-title">
+              <i class="fas fa-file-invoice-dollar"></i>
+              <h3>Información Fiscal</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="annualIncome">Ingreso Anual *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="annualIncome"
+                    formControlName="annualIncome"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="taxForm.get('annualIncome')?.invalid && taxForm.get('annualIncome')?.touched">
+                  <span>El ingreso anual es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="otherIncome">Otros Ingresos</label>
+                <div class="input-container">
+                  <i class="fas fa-plus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="otherIncome"
+                    formControlName="otherIncome"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="deductions">Deducciones Personales</label>
+                <div class="input-container">
+                  <i class="fas fa-minus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="deductions"
+                    formControlName="deductions"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="dependents">Dependientes</label>
+                <div class="input-container">
+                  <i class="fas fa-users"></i>
+                  <input 
+                    type="number" 
+                    id="dependents"
+                    formControlName="dependents"
+                    placeholder="0"
+                    min="0"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="taxForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular ISR</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetCalculator()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="calculator-results" *ngIf="taxResults.length > 0">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of taxResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loan Calculator -->
+    <section class="calculator-section" *ngIf="activeCalculator === 'loan'">
+      <div class="section-header">
+        <h2>Calculadora de Préstamos</h2>
+        <p>Calcula pagos mensuales, intereses y cronograma de pagos</p>
+      </div>
+
+      <div class="calculator-grid">
+        <div class="calculator-form">
+          <form [formGroup]="loanForm" (ngSubmit)="calculateLoan()">
+            <div class="form-section-title">
+              <i class="fas fa-credit-card"></i>
+              <h3>Información del Préstamo</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="principal">Monto del Préstamo *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="principal"
+                    formControlName="principal"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="loanForm.get('principal')?.invalid && loanForm.get('principal')?.touched">
+                  <span>El monto es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="interestRate">Tasa de Interés Anual (%) *</label>
+                <div class="input-container">
+                  <i class="fas fa-percentage"></i>
+                  <input 
+                    type="number" 
+                    id="interestRate"
+                    formControlName="interestRate"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="loanForm.get('interestRate')?.invalid && loanForm.get('interestRate')?.touched">
+                  <span>La tasa de interés es requerida</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="termYears">Plazo (Años) *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar-alt"></i>
+                  <input 
+                    type="number" 
+                    id="termYears"
+                    formControlName="termYears"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                  >
+                </div>
+                <div class="error-message" *ngIf="loanForm.get('termYears')?.invalid && loanForm.get('termYears')?.touched">
+                  <span>El plazo es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="paymentFrequency">Frecuencia de Pago</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar"></i>
+                  <select id="paymentFrequency" formControlName="paymentFrequency">
+                    <option value="monthly">Mensual</option>
+                    <option value="biweekly">Quincenal</option>
+                    <option value="weekly">Semanal</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="loanForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular Préstamo</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetCalculator()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="calculator-results" *ngIf="loanResults.length > 0">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of loanResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+            </div>
+          </div>
+
+          <div class="schedule-section" *ngIf="loanSchedule.length > 0">
+            <h4>Cronograma de Pagos (Primeros 12)</h4>
+            <div class="schedule-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pago #</th>
+                    <th>Pago Total</th>
+                    <th>Capital</th>
+                    <th>Interés</th>
+                    <th>Saldo Restante</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let payment of loanSchedule">
+                    <td>{{ payment.payment }}</td>
+                    <td>{{ formatCurrency(payment.paymentAmount) }}</td>
+                    <td>{{ formatCurrency(payment.principalPayment) }}</td>
+                    <td>{{ formatCurrency(payment.interestPayment) }}</td>
+                    <td>{{ formatCurrency(payment.remainingBalance) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Investment Calculator -->
+    <section class="calculator-section" *ngIf="activeCalculator === 'investment'">
+      <div class="section-header">
+        <h2>Calculadora de Inversiones</h2>
+        <p>Calcula el valor futuro de tus inversiones con interés compuesto</p>
+      </div>
+
+      <div class="calculator-grid">
+        <div class="calculator-form">
+          <form [formGroup]="investmentForm" (ngSubmit)="calculateInvestment()">
+            <div class="form-section-title">
+              <i class="fas fa-chart-line"></i>
+              <h3>Información de la Inversión</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="initialAmount">Inversión Inicial *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="initialAmount"
+                    formControlName="initialAmount"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="investmentForm.get('initialAmount')?.invalid && investmentForm.get('initialAmount')?.touched">
+                  <span>La inversión inicial es requerida</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="monthlyContribution">Contribución Mensual</label>
+                <div class="input-container">
+                  <i class="fas fa-plus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="monthlyContribution"
+                    formControlName="monthlyContribution"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="annualReturn">Retorno Anual (%) *</label>
+                <div class="input-container">
+                  <i class="fas fa-percentage"></i>
+                  <input 
+                    type="number" 
+                    id="annualReturn"
+                    formControlName="annualReturn"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="investmentForm.get('annualReturn')?.invalid && investmentForm.get('annualReturn')?.touched">
+                  <span>El retorno anual es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="years">Años de Inversión *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar-alt"></i>
+                  <input 
+                    type="number" 
+                    id="years"
+                    formControlName="years"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                  >
+                </div>
+                <div class="error-message" *ngIf="investmentForm.get('years')?.invalid && investmentForm.get('years')?.touched">
+                  <span>Los años son requeridos</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="compoundFrequency">Frecuencia de Capitalización</label>
+              <div class="input-container">
+                <i class="fas fa-calendar"></i>
+                <select id="compoundFrequency" formControlName="compoundFrequency">
+                  <option value="monthly">Mensual</option>
+                  <option value="quarterly">Trimestral</option>
+                  <option value="annually">Anual</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="investmentForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular Inversión</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetCalculator()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="calculator-results" *ngIf="investmentResults.length > 0">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of investmentResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Depreciation Calculator -->
+    <section class="calculator-section" *ngIf="activeCalculator === 'depreciation'">
+      <div class="section-header">
+        <h2>Calculadora de Depreciación</h2>
+        <p>Calcula la depreciación de activos fijos</p>
+      </div>
+
+      <div class="calculator-grid">
+        <div class="calculator-form">
+          <form [formGroup]="depreciationForm" (ngSubmit)="calculateDepreciation()">
+            <div class="form-section-title">
+              <i class="fas fa-building"></i>
+              <h3>Información del Activo</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="assetValue">Valor del Activo *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="assetValue"
+                    formControlName="assetValue"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="depreciationForm.get('assetValue')?.invalid && depreciationForm.get('assetValue')?.touched">
+                  <span>El valor del activo es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="salvageValue">Valor de Salvamento</label>
+                <div class="input-container">
+                  <i class="fas fa-recycle"></i>
+                  <input 
+                    type="number" 
+                    id="salvageValue"
+                    formControlName="salvageValue"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="usefulLife">Vida Útil (Años) *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar-alt"></i>
+                  <input 
+                    type="number" 
+                    id="usefulLife"
+                    formControlName="usefulLife"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                  >
+                </div>
+                <div class="error-message" *ngIf="depreciationForm.get('usefulLife')?.invalid && depreciationForm.get('usefulLife')?.touched">
+                  <span>La vida útil es requerida</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="depreciationMethod">Método de Depreciación</label>
+                <div class="input-container">
+                  <i class="fas fa-chart-bar"></i>
+                  <select id="depreciationMethod" formControlName="depreciationMethod">
+                    <option value="straight-line">Línea Recta</option>
+                    <option value="declining-balance">Saldo Decreciente</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="depreciationForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular Depreciación</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetCalculator()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="calculator-results" *ngIf="depreciationResults.length > 0">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of depreciationResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+            </div>
+          </div>
+
+          <div class="schedule-section" *ngIf="depreciationSchedule.length > 0">
+            <h4>Cronograma de Depreciación</h4>
+            <div class="schedule-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Año</th>
+                    <th>Valor Inicial</th>
+                    <th>Depreciación</th>
+                    <th>Valor Final</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of depreciationSchedule">
+                    <td>{{ item.year }}</td>
+                    <td>{{ formatCurrency(item.beginningValue) }}</td>
+                    <td>{{ formatCurrency(item.depreciation) }}</td>
+                    <td>{{ formatCurrency(item.endingValue) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div> 

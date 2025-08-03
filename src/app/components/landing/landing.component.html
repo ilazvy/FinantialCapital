@@ -1,0 +1,343 @@
+<!-- Navigation -->
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <i class="fas fa-chart-line"></i>
+      <span>Finantial Capital</span>
+    </div>
+    
+    <div class="nav-menu" [class.active]="isMenuOpen">
+      <button (click)="scrollToSection('home', $event)" class="nav-link">Inicio</button>
+      <button (click)="scrollToSection('features', $event)" class="nav-link">Características</button>
+      <button (click)="scrollToSection('pricing', $event)" class="nav-link">Precios</button>
+      <button (click)="scrollToSection('testimonials', $event)" class="nav-link">Testimonios</button>
+      <button (click)="scrollToSection('contact', $event)" class="nav-link">Contacto</button>
+      
+      <!-- Botones de acción para móvil -->
+      <div class="nav-actions-mobile">
+        <button class="btn-secondary" (click)="navigateToLogin()">Iniciar Sesión</button>
+        <!-- <button class="btn-primary" (click)="navigateToRegister()">Registrarse</button> -->
+      </div>
+    </div>
+    
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToLogin()">Iniciar Sesión</button>
+      <!-- <button class="btn-primary" (click)="navigateToRegister()">Registrarse</button> -->
+    </div>
+    
+    <div class="nav-toggle" [class.active]="isMenuOpen" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+  <div class="hero-background">
+    <div class="hero-overlay"></div>
+  </div>
+  
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 class="hero-title">
+        <span class="title-main">{{ heroTitle }}</span>
+        <span class="title-subtitle">{{ heroSubtitle }}</span>
+      </h1>
+      <p class="hero-description">{{ heroDescription }}</p>
+      
+      <!-- Eslogan agregado -->
+      <div class="hero-slogan">
+        <span class="slogan-text">23 casi 24 años laborando</span>
+      </div>
+      
+      <div class="hero-actions">
+        <button class="btn-primary btn-large" (click)="navigateToRegister()">
+          <i class="fas fa-rocket"></i>
+          <span>Comenzar Gratis</span>
+        </button>
+        <button class="btn-secondary btn-large" (click)="scrollToSection('features')">
+          <i class="fas fa-play"></i>
+          <span>Ver Demo</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="hero-visual">
+      <div class="hero-image">
+        <i class="fas fa-chart-pie"></i>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item" *ngFor="let stat of statistics">
+        <div class="stat-icon">
+          <i [class]="stat.icon"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ stat.value }}</h3>
+          <p class="stat-label">{{ stat.label }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Características Principales</h2>
+      <p class="section-subtitle">Todo lo que necesitas para gestionar tu empresa de manera eficiente</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let feature of features">
+        <div class="feature-icon" [style.background-color]="getFeatureColor(feature.color)">
+          <i [class]="feature.icon"></i>
+        </div>
+        <div class="feature-content">
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="pricing-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Planes y Precios</h2>
+      <p class="section-subtitle">Elige el plan que mejor se adapte a las necesidades de tu empresa</p>
+    </div>
+    
+    <div class="pricing-grid">
+      <div class="pricing-card" *ngFor="let plan of pricingPlans" [class.popular]="plan.popular">
+        <div class="pricing-header" [style.background-color]="getPricingColor(plan.color)">
+          <h3 class="plan-name">{{ plan.name }}</h3>
+          <div class="plan-price">
+            <span class="price">{{ plan.price }}</span>
+            <span class="period">/{{ plan.period }}</span>
+          </div>
+          <div class="popular-badge" *ngIf="plan.popular">Más Popular</div>
+        </div>
+        
+        <div class="pricing-features">
+          <ul class="features-list">
+            <li *ngFor="let feature of plan.features">
+              <i class="fas fa-check"></i>
+              <span>{{ feature }}</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="pricing-action">
+          <button class="btn-primary" [class.btn-outline]="!plan.popular" (click)="navigateToRegister()">
+            <span>{{ plan.popular ? 'Comenzar Ahora' : 'Elegir Plan' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="testimonials-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+      <p class="section-subtitle">Descubre por qué cientos de empresas confían en Financial Capital</p>
+    </div>
+    
+    <div class="testimonials-grid">
+      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="testimonial-content">
+          <div class="testimonial-rating">
+            <i *ngFor="let star of getStars(testimonial.rating)" class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">{{ testimonial.content }}</p>
+        </div>
+        
+        <div class="testimonial-author">
+          <div class="author-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="author-info">
+            <h4 class="author-name">{{ testimonial.name }}</h4>
+            <p class="author-position">{{ testimonial.position }} en {{ testimonial.company }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2 class="cta-title">¿Listo para transformar tu empresa?</h2>
+      <p class="cta-description">Únete a cientos de empresas que ya confían en Finantial Capital para gestionar sus finanzas</p>
+      
+      <div class="cta-actions">
+        <button class="btn-primary btn-large" (click)="navigateToRegister()">
+          <i class="fas fa-rocket"></i>
+          <span>Comenzar Gratis</span>
+        </button>
+        <button class="btn-secondary btn-large" (click)="scrollToSection('contact')">
+          <i class="fas fa-phone"></i>
+          <span>Contactar Ventas</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2 class="section-title">Contáctanos</h2>
+        <p class="section-subtitle">¿Tienes preguntas? Estamos aquí para ayudarte</p>
+        
+        <div class="contact-details">
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <h4>Dirección</h4>
+              <p>Av. Reforma 123, Ciudad de México</p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <h4>Teléfono</h4>
+              <p>+52 (55) 1234-5678</p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <h4>Email</h4>
+              <p>info@finantialcapital.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contact-form">
+        <form (ngSubmit)="submitContact()">
+          <div class="form-group">
+            <input type="text" placeholder="Nombre completo" [(ngModel)]="contactForm.name" name="name" required>
+          </div>
+          
+          <div class="form-group">
+            <input type="email" placeholder="Email" [(ngModel)]="contactForm.email" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <input type="text" placeholder="Empresa" [(ngModel)]="contactForm.company" name="company">
+          </div>
+          
+          <div class="form-group">
+            <textarea placeholder="Mensaje" [(ngModel)]="contactForm.message" name="message" rows="5" required></textarea>
+          </div>
+          
+          <button type="submit" class="btn-primary btn-full">
+            <i class="fas fa-paper-plane"></i>
+            <span>Enviar Mensaje</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-content">
+      <h2>Mantente actualizado</h2>
+      <p>Suscríbete a nuestro newsletter para recibir las últimas noticias y actualizaciones</p>
+      
+      <div class="newsletter-form">
+        <input type="email" placeholder="Tu email" [(ngModel)]="newsletterEmail">
+        <button class="btn-primary" (click)="subscribeNewsletter()">
+          <i class="fas fa-paper-plane"></i>
+          <span>Suscribirse</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="footer-logo">
+          <i class="fas fa-chart-line"></i>
+          <span>Financial Capital</span>
+        </div>
+        <p>La plataforma de contabilidad más avanzada para empresas modernas.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="#features">Características</a></li>
+          <li><a href="#pricing">Precios</a></li>
+          <li><a href="#testimonials">Testimonios</a></li>
+          <li><a href="#contact">Contacto</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Soporte</h4>
+        <ul>
+          <li><a href="#">Centro de Ayuda</a></li>
+          <li><a href="#">Documentación</a></li>
+          <li><a href="#">API</a></li>
+          <li><a href="#">Estado del Servicio</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#">Acerca de</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carreras</a></li>
+          <li><a routerLink="/aviso-privacidad">Aviso de Privacidad</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2024 Finantial Capital. Todos los derechos reservados.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>

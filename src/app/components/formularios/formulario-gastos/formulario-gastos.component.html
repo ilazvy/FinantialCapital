@@ -1,0 +1,293 @@
+<div class="formulario-gastos-container">
+  <!-- Header -->
+  <header class="form-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-title">
+          <h1>Registro de Gastos</h1>
+          <p>Gestiona los gastos y salidas de capital</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="export-button" (click)="exportExpenses()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Expense Summary -->
+  <div class="expense-summary">
+    <div class="summary-card">
+      <div class="summary-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <div class="summary-content">
+          <h3>Total Pagado</h3>
+          <p>{{ formatCurrency(calculateTotalExpenses()) }}</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <i class="fas fa-clock"></i>
+        <div class="summary-content">
+          <h3>Pendiente</h3>
+          <p>{{ formatCurrency(calculatePendingExpenses()) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="form-main">
+    <div class="form-grid">
+      <!-- Expense Form -->
+      <div class="form-section">
+        <div class="form-card">
+          <div class="form-card-header">
+            <i class="fas fa-minus-circle"></i>
+            <h3>Nuevo Gasto</h3>
+          </div>
+          
+          <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="description">Descripción del Gasto *</label>
+              <div class="input-container">
+                <i class="fas fa-comment"></i>
+                <textarea 
+                  id="description"
+                  formControlName="description"
+                  placeholder="Describe detalladamente el gasto"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="error-message" *ngIf="expenseForm.get('description')?.invalid && expenseForm.get('description')?.touched">
+                <span>La descripción debe tener al menos 10 caracteres</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="amount">Monto *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="amount"
+                    formControlName="amount"
+                    placeholder="0.00"
+                    min="0.01"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched">
+                  <span>El monto debe ser mayor a 0</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="date">Fecha del Gasto *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar"></i>
+                  <input 
+                    type="date" 
+                    id="date"
+                    formControlName="date"
+                  >
+                </div>
+                <div class="error-message" *ngIf="expenseForm.get('date')?.invalid && expenseForm.get('date')?.touched">
+                  <span>Selecciona una fecha</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="category">Categoría *</label>
+                <div class="input-container">
+                  <i class="fas fa-tag"></i>
+                  <select id="category" formControlName="category">
+                    <option *ngFor="let category of expenseCategories" [value]="category.value">
+                      {{ category.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="vendor">Proveedor *</label>
+                <div class="input-container">
+                  <i class="fas fa-building"></i>
+                  <select id="vendor" formControlName="vendor">
+                    <option *ngFor="let vendor of vendors" [value]="vendor.value">
+                      {{ vendor.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="paymentMethod">Método de Pago *</label>
+                <div class="input-container">
+                  <i class="fas fa-credit-card"></i>
+                  <select id="paymentMethod" formControlName="paymentMethod">
+                    <option *ngFor="let method of paymentMethods" [value]="method.value">
+                      {{ method.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reference">Referencia</label>
+                <div class="input-container">
+                  <i class="fas fa-hashtag"></i>
+                  <input 
+                    type="text" 
+                    id="reference"
+                    formControlName="reference"
+                    placeholder="Número de referencia"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Notas Adicionales</label>
+              <div class="input-container">
+                <i class="fas fa-sticky-note"></i>
+                <textarea 
+                  id="notes"
+                  formControlName="notes"
+                  placeholder="Información adicional sobre el gasto"
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="isRecurring">
+                <span>Gasto Recurrente</span>
+              </label>
+              <small>Marcar si este gasto se repite periódicamente</small>
+            </div>
+
+            <div class="form-group" *ngIf="expenseForm.get('isRecurring')?.value">
+              <label for="recurringPeriod">Período de Recurrencia</label>
+              <div class="input-container">
+                <i class="fas fa-calendar-alt"></i>
+                <select id="recurringPeriod" formControlName="recurringPeriod">
+                  <option value="weekly">Semanal</option>
+                  <option value="monthly">Mensual</option>
+                  <option value="quarterly">Trimestral</option>
+                  <option value="yearly">Anual</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="isUrgent">
+                <span>Gasto Urgente</span>
+              </label>
+              <small>Marcar si este gasto requiere atención inmediata</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="expenseForm.invalid">
+                <i class="fas fa-save"></i>
+                <span>Registrar Gasto</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="expenseForm.reset()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Expense History -->
+      <div class="history-section">
+        <div class="history-card">
+          <div class="history-header">
+            <h3>Historial de Gastos</h3>
+            <div class="history-actions">
+              <button class="btn-toggle" (click)="toggleExpenseHistory()">
+                <i class="fas" [class.fa-eye]="!showExpenseHistory" [class.fa-eye-slash]="showExpenseHistory"></i>
+                <span>{{ showExpenseHistory ? 'Ocultar' : 'Mostrar' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-section">
+            <div class="input-container">
+              <i class="fas fa-search"></i>
+              <input 
+                type="text" 
+                placeholder="Buscar gastos..."
+                (input)="searchExpenses($event)"
+              >
+            </div>
+          </div>
+
+          <div class="expense-list" *ngIf="showExpenseHistory">
+            <div class="expense-item" *ngFor="let expense of filteredExpenses" [class]="'status-' + getStatusColor(expense.status)">
+              <div class="expense-header">
+                <div class="expense-info">
+                  <h4>{{ expense.description }}</h4>
+                  <p>{{ expense.notes || 'Sin notas adicionales' }}</p>
+                  <div class="expense-meta">
+                    <span class="expense-category">{{ getCategoryLabel(expense.category) }}</span>
+                    <span class="expense-vendor">{{ getVendorLabel(expense.vendor) }}</span>
+                    <span class="expense-method">{{ getPaymentMethodLabel(expense.paymentMethod) }}</span>
+                    <span class="expense-date">{{ formatDate(expense.date) }}</span>
+                  </div>
+                </div>
+                <div class="expense-amount">
+                  <span class="amount">{{ formatCurrency(expense.amount) }}</span>
+                  <span class="status" [class]="'status-' + getStatusColor(expense.status)">
+                    {{ getStatusText(expense.status) }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="expense-actions">
+                <button 
+                  class="btn-action" 
+                  *ngIf="expense.status === 'pending'"
+                  (click)="updateExpenseStatus(expense.id, 'paid')"
+                  title="Marcar como pagado"
+                >
+                  <i class="fas fa-check"></i>
+                </button>
+                <button 
+                  class="btn-action danger" 
+                  (click)="updateExpenseStatus(expense.id, 'cancelled')"
+                  title="Cancelar gasto"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+                <button 
+                  class="btn-action secondary" 
+                  (click)="deleteExpense(expense.id)"
+                  title="Eliminar gasto"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="no-expenses" *ngIf="filteredExpenses.length === 0">
+              <i class="fas fa-inbox"></i>
+              <p>No se encontraron gastos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

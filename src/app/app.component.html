@@ -1,0 +1,24 @@
+<!-- Loading Component -->
+<app-loading *ngIf="isLoading$ | async" [message]="loadingMessage$ | async"></app-loading>
+
+<!-- Layout Principal -->
+<div class="app-layout" *ngIf="shouldShowLayout()">
+  <!-- Header Global -->
+  <app-header></app-header>
+  
+  <!-- Contenido Principal con Sidebar -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <app-sidebar></app-sidebar>
+    
+    <!-- Área de Contenido -->
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+<!-- Páginas sin Layout (Login, Landing) -->
+<div class="full-page" *ngIf="!shouldShowLayout()">
+  <router-outlet></router-outlet>
+</div>

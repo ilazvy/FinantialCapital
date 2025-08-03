@@ -1,0 +1,148 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo y animación de carga -->
+    <div class="logo-section">
+      <div class="logo-container">
+        <div class="coin-animation">
+          <div class="coin">💰</div>
+          <div class="piggy-bank">🏦</div>
+        </div>
+        <h1 class="logo-text">Finantial Capital</h1>
+        <p class="logo-subtitle">Plataforma de Contabilidad Empresarial</p>
+      </div>
+    </div>
+
+    <!-- Formulario de Login -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-header">
+        <h2>Iniciar Sesión</h2>
+        <p>Accede a tu cuenta</p>
+      </div>
+
+      <!-- Campo Email -->
+      <div class="form-group">
+        <label for="email">Correo Electrónico</label>
+        <div class="input-container">
+          <i class="fas fa-envelope input-icon"></i>
+          <input 
+            type="email" 
+            id="email"
+            formControlName="email"
+            placeholder="tu@email.com"
+            [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">El email es requerido</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">Email inválido</span>
+        </div>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-container">
+          <i class="fas fa-lock input-icon"></i>
+          <input 
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          >
+          <button 
+            type="button" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+          >
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es requerida</span>
+          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Selector de Rol -->
+      <div class="form-group">
+        <label for="role">Rol</label>
+        <div class="input-container">
+          <i class="fas fa-user-tag input-icon"></i>
+          <select id="role" formControlName="role" class="role-select">
+            <option value="employee">Empleado</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CAPTCHA -->
+      <div class="form-group">
+        <label for="captcha">CAPTCHA</label>
+        <div class="captcha-container">
+          <div class="captcha-display">
+            <span class="captcha-text">{{ captchaValue }}</span>
+            <button type="button" class="refresh-captcha" (click)="generateCaptcha()">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+          </div>
+          <div class="input-container">
+            <i class="fas fa-shield-alt input-icon"></i>
+            <input 
+              type="text" 
+              id="captcha"
+              formControlName="captcha"
+              placeholder="Ingresa el código"
+              maxlength="6"
+              [class.error]="loginForm.get('captcha')?.invalid && loginForm.get('captcha')?.touched"
+            >
+          </div>
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('captcha')?.invalid && loginForm.get('captcha')?.touched">
+          <span *ngIf="loginForm.get('captcha')?.errors?.['required']">CAPTCHA requerido</span>
+        </div>
+      </div>
+
+      <!-- Información de intentos -->
+      <div class="attempts-info" *ngIf="loginAttempts > 0">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Intentos restantes: {{ getRemainingAttempts() }}</span>
+      </div>
+
+      <!-- Mensaje de bloqueo -->
+      <div class="block-message" *ngIf="isBlocked">
+        <i class="fas fa-ban"></i>
+        <span>Cuenta bloqueada temporalmente por múltiples intentos fallidos</span>
+      </div>
+
+      <!-- Botón de envío -->
+      <button 
+        type="submit" 
+        class="login-button"
+        [disabled]="loginForm.invalid || isBlocked || isLoading"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">Iniciar Sesión</span>
+        <div class="spinner" *ngIf="isLoading">
+          <div class="spinner-ring"></div>
+        </div>
+      </button>
+
+      <!-- Credenciales de ejemplo -->
+      <div class="demo-credentials">
+        <h4>Credenciales de Demo:</h4>
+        <div class="credential-item">
+          <strong>Admin:</strong> admin@financial.com / admin123
+        </div>
+        <div class="credential-item">
+          <strong>Empleado:</strong> empleado@financial.com / empleado123
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Efectos de sonido (simulado) -->
+  <audio id="cashRegisterSound" preload="auto">
+    <source src="assets/sounds/cash-register.mp3" type="audio/mpeg">
+  </audio>
+</div>

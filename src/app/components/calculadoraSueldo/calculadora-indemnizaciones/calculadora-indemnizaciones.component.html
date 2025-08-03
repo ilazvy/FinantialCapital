@@ -1,0 +1,348 @@
+<div class="calculadora-indemnizaciones-container">
+  <!-- Header -->
+  <header class="calculator-header">
+    <div class="header-content">
+      <div class="header-left">
+        <!-- <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button> -->
+        <div class="header-title">
+          <h1>Calculadora de Indemnizaciones</h1>
+          <p>Calcula liquidaciones y finiquitos laborales</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- <button class="export-button" (click)="exportResults()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button> -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="calculator-main">
+    <div class="calculator-grid">
+      <!-- Form Section -->
+      <div class="calculator-form">
+        <form [formGroup]="indemnizationForm" (ngSubmit)="calculateIndemnization()">
+          <!-- Employee Information -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-user-tie"></i>
+              <h3>Información del Empleado</h3>
+            </div>
+            
+            <div class="form-group">
+              <label for="baseSalary">Salario Base Mensual *</label>
+              <div class="input-container">
+                <i class="fas fa-dollar-sign"></i>
+                <input 
+                  type="number" 
+                  id="baseSalary"
+                  formControlName="baseSalary"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+              <div class="error-message" *ngIf="indemnizationForm.get('baseSalary')?.invalid && indemnizationForm.get('baseSalary')?.touched">
+                <span>El salario base es requerido</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="startDate">Fecha de Ingreso *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar-plus"></i>
+                  <input 
+                    type="date" 
+                    id="startDate"
+                    formControlName="startDate"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="endDate">Fecha de Salida *</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar-minus"></i>
+                  <input 
+                    type="date" 
+                    id="endDate"
+                    formControlName="endDate"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Termination Information -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-file-contract"></i>
+              <h3>Tipo de Terminación</h3>
+            </div>
+            
+            <div class="form-group">
+              <label for="terminationType">Tipo de Terminación *</label>
+              <div class="input-container">
+                <i class="fas fa-handshake"></i>
+                <select id="terminationType" formControlName="terminationType">
+                  <option value="voluntary">Renuncia Voluntaria</option>
+                  <option value="involuntary">Despido Injustificado</option>
+                  <option value="mutual">Terminación Mutua</option>
+                  <option value="retirement">Jubilación</option>
+                  <option value="death">Fallecimiento</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="terminationReason">Motivo de Terminación</label>
+              <div class="input-container">
+                <i class="fas fa-comment"></i>
+                <input 
+                  type="text" 
+                  id="terminationReason"
+                  formControlName="terminationReason"
+                  placeholder="Descripción del motivo"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-gift"></i>
+              <h3>Prestaciones y Beneficios</h3>
+            </div>
+            
+            <div class="benefits-grid">
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasVacationBonus">
+                  <span>Prima Vacacional</span>
+                </label>
+                <small>25% sobre vacaciones</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasChristmasBonus">
+                  <span>Aguinaldo</span>
+                </label>
+                <small>15 días de salario</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasProfitSharing">
+                  <span>PTU</span>
+                </label>
+                <small>Participación en utilidades</small>
+              </div>
+
+              <div class="benefit-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="seniorityBonus">
+                  <span>Prima de Antigüedad</span>
+                </label>
+                <small>12 días por año trabajado</small>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="indemnizationForm.get('hasProfitSharing')?.value">
+              <label for="profitSharingPercentage">Porcentaje PTU (%)</label>
+              <div class="input-container">
+                <i class="fas fa-percentage"></i>
+                <input 
+                  type="number" 
+                  id="profitSharingPercentage"
+                  formControlName="profitSharingPercentage"
+                  placeholder="0"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Information -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-plus-circle"></i>
+              <h3>Información Adicional</h3>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="unusedVacationDays">Días de Vacaciones No Gozadas</label>
+                <div class="input-container">
+                  <i class="fas fa-calendar-check"></i>
+                  <input 
+                    type="number" 
+                    id="unusedVacationDays"
+                    formControlName="unusedVacationDays"
+                    placeholder="0"
+                    min="0"
+                    max="365"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="pendingBonuses">Bonos Pendientes</label>
+                <div class="input-container">
+                  <i class="fas fa-clock"></i>
+                  <input 
+                    type="number" 
+                    id="pendingBonuses"
+                    formControlName="pendingBonuses"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="otherBenefits">Otros Beneficios</label>
+                <div class="input-container">
+                  <i class="fas fa-plus"></i>
+                  <input 
+                    type="number" 
+                    id="otherBenefits"
+                    formControlName="otherBenefits"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="deductions">Deducciones</label>
+                <div class="input-container">
+                  <i class="fas fa-minus"></i>
+                  <input 
+                    type="number" 
+                    id="deductions"
+                    formControlName="deductions"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legal Considerations -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="fas fa-balance-scale"></i>
+              <h3>Consideraciones Legales</h3>
+            </div>
+            
+            <div class="legal-options">
+              <div class="legal-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="isUnjustifiedDismissal">
+                  <span>Despido Injustificado</span>
+                </label>
+                <small>Triplica la indemnización</small>
+              </div>
+
+              <div class="legal-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasLaborRights">
+                  <span>Derechos Laborales</span>
+                </label>
+                <small>Incluye todos los derechos</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="indemnizationForm.invalid">
+              <i class="fas fa-calculator"></i>
+              <span>Calcular Liquidación</span>
+            </button>
+            <button type="button" class="btn-secondary" (click)="resetCalculator()">
+              <i class="fas fa-undo"></i>
+              <span>Limpiar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Results Section -->
+      <div class="calculator-results" *ngIf="indemnizationResults.length > 0">
+        <div class="results-header">
+          <h3>Resultados de la Liquidación</h3>
+          <div class="results-actions">
+            <button class="btn-toggle" (click)="toggleDetails()">
+              <i class="fas" [class.fa-eye]="!showDetails" [class.fa-eye-slash]="showDetails"></i>
+              <span>{{ showDetails ? 'Ocultar' : 'Mostrar' }} Detalles</span>
+            </button>
+            <button class="btn-toggle" (click)="toggleBreakdown()">
+              <i class="fas" [class.fa-chart-pie]="!showBreakdown" [class.fa-chart-bar]="showBreakdown"></i>
+              <span>{{ showBreakdown ? 'Ocultar' : 'Mostrar' }} Desglose</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Results -->
+        <div class="main-results">
+          <div class="result-card primary" *ngIf="indemnizationResults[12]">
+            <div class="result-icon">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <div class="result-content">
+              <h4>Total a Recibir</h4>
+              <div class="result-value">{{ indemnizationResults[12].formattedValue }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Results -->
+        <div class="detailed-results" *ngIf="showDetails">
+          <div class="results-grid">
+            <div class="result-item" *ngFor="let result of indemnizationResults" [class]="'result-' + result.color">
+              <div class="result-label">{{ result.label }}</div>
+              <div class="result-value">{{ result.formattedValue }}</div>
+              <div class="result-description" *ngIf="result.description">{{ result.description }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Breakdown Chart -->
+        <div class="breakdown-section" *ngIf="showBreakdown && indemnizationResults.length > 0">
+          <h4>Desglose de la Liquidación</h4>
+          <div class="breakdown-chart">
+            <div class="breakdown-item" *ngFor="let result of indemnizationResults.slice(3, 10)">
+              <div class="breakdown-header">
+                <div class="breakdown-color" [style.background-color]="getBreakdownColor(result.color)"></div>
+                <span class="breakdown-category">{{ result.label }}</span>
+                <span class="breakdown-amount">{{ result.formattedValue }}</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" [style.width.%]="getBreakdownPercentage(result.value, indemnizationResults[12].value)" [style.background-color]="getBreakdownColor(result.color)"></div>
+              </div>
+              <div class="breakdown-percentage">{{ formatPercentage(getBreakdownPercentage(result.value, indemnizationResults[12].value)) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,296 @@
+<div class="calculadora-impuestos-container">
+  <!-- Header -->
+  <header class="calculator-header">
+    <div class="header-content">
+      <div class="header-left">
+        <!-- <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button> -->
+        <div class="header-title">
+          <h1>Calculadora de Impuestos</h1>
+          <p>Calcula ISR e IVA de manera precisa</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- <button class="export-button" (click)="exportResults()">
+          <i class="fas fa-download"></i>
+          <span>Exportar</span>
+        </button> -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Calculator Navigation -->
+  <nav class="calculator-nav">
+    <button 
+      class="nav-button" 
+      [class.active]="activeCalculator === 'isr'"
+      (click)="setActiveCalculator('isr')"
+    >
+      <i class="fas fa-calculator"></i>
+      <span>ISR</span>
+    </button>
+    <button 
+      class="nav-button" 
+      [class.active]="activeCalculator === 'iva'"
+      (click)="setActiveCalculator('iva')"
+    >
+      <i class="fas fa-percentage"></i>
+      <span>IVA</span>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="calculator-main">
+    <div class="calculator-grid">
+      <!-- Forms Section -->
+      <div class="forms-section">
+        <!-- ISR Calculator -->
+        <div class="form-card" *ngIf="activeCalculator === 'isr'">
+          <div class="form-header">
+            <i class="fas fa-calculator"></i>
+            <h3>Calculadora de ISR</h3>
+          </div>
+          
+          <form [formGroup]="isrForm" (ngSubmit)="calculateISR()">
+            <div class="form-section">
+              <h4>Ingresos</h4>
+              
+              <div class="form-group">
+                <label for="annualIncome">Ingresos Anuales *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="annualIncome"
+                    formControlName="annualIncome"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="isrForm.get('annualIncome')?.invalid && isrForm.get('annualIncome')?.touched">
+                  <span>Los ingresos anuales son requeridos</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="otherIncome">Otros Ingresos</label>
+                <div class="input-container">
+                  <i class="fas fa-plus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="otherIncome"
+                    formControlName="otherIncome"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>Deducciones</h4>
+              
+              <div class="form-group">
+                <label for="deductions">Deducciones Personales</label>
+                <div class="input-container">
+                  <i class="fas fa-minus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="deductions"
+                    formControlName="deductions"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasOtherDeductions">
+                  <span>Otras Deducciones</span>
+                </label>
+              </div>
+
+              <div class="form-group" *ngIf="isrForm.get('hasOtherDeductions')?.value">
+                <label for="otherDeductionsAmount">Monto de Otras Deducciones</label>
+                <div class="input-container">
+                  <i class="fas fa-minus-circle"></i>
+                  <input 
+                    type="number" 
+                    id="otherDeductionsAmount"
+                    formControlName="otherDeductionsAmount"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>Subsidios</h4>
+              
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="hasSubsidy">
+                  <span>Aplicar Subsidio al Empleo</span>
+                </label>
+                <small>Subsidio del 0.92% para ingresos menores a $500,000</small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="isrForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular ISR</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetISR()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- IVA Calculator -->
+        <div class="form-card" *ngIf="activeCalculator === 'iva'">
+          <div class="form-header">
+            <i class="fas fa-percentage"></i>
+            <h3>Calculadora de IVA</h3>
+          </div>
+          
+          <form [formGroup]="ivaForm" (ngSubmit)="calculateIVA()">
+            <div class="form-section">
+              <h4>Información del Producto/Servicio</h4>
+              
+              <div class="form-group">
+                <label for="subtotal">Subtotal *</label>
+                <div class="input-container">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input 
+                    type="number" 
+                    id="subtotal"
+                    formControlName="subtotal"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  >
+                </div>
+                <div class="error-message" *ngIf="ivaForm.get('subtotal')?.invalid && ivaForm.get('subtotal')?.touched">
+                  <span>El subtotal es requerido</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="ivaRate">Tasa de IVA</label>
+                <div class="input-container">
+                  <i class="fas fa-percentage"></i>
+                  <select id="ivaRate" formControlName="ivaRate">
+                    <option *ngFor="let rate of IVA_RATES" [value]="rate.rate">
+                      {{ rate.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="includeIVA">
+                  <span>IVA Incluido en el Subtotal</span>
+                </label>
+                <small>Marcar si el IVA ya está incluido en el monto</small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="ivaForm.invalid">
+                <i class="fas fa-calculator"></i>
+                <span>Calcular IVA</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="resetIVA()">
+                <i class="fas fa-undo"></i>
+                <span>Limpiar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section" *ngIf="showDetails">
+        <div class="results-header">
+          <h3>Resultados del Cálculo</h3>
+          <div class="results-actions">
+            <button class="btn-toggle" (click)="toggleDetails()">
+              <i class="fas" [class.fa-eye]="!showDetails" [class.fa-eye-slash]="showDetails"></i>
+              <span>{{ showDetails ? 'Ocultar' : 'Mostrar' }} Detalles</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ISR Results -->
+        <div class="isr-results" *ngIf="activeCalculator === 'isr' && isrResults.length > 0">
+          <div class="main-result">
+            <div class="result-card primary" *ngIf="isrResults[6]">
+              <div class="result-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div class="result-content">
+                <h4>ISR a Pagar</h4>
+                <div class="result-value">{{ isrResults[6].formattedValue }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detailed-results" *ngIf="showDetails">
+            <div class="results-grid">
+              <div class="result-item" *ngFor="let result of isrResults" [class]="'result-' + result.color">
+                <div class="result-label">{{ result.label }}</div>
+                <div class="result-value">{{ result.formattedValue }}</div>
+                <div class="result-description" *ngIf="result.description">{{ result.description }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IVA Results -->
+        <div class="iva-results" *ngIf="activeCalculator === 'iva' && ivaResults.length > 0">
+          <div class="main-result">
+            <div class="result-card success" *ngIf="ivaResults[0]">
+              <div class="result-icon">
+                <i class="fas fa-percentage"></i>
+              </div>
+              <div class="result-content">
+                <h4>Total con IVA</h4>
+                <div class="result-value">{{ formatCurrency(ivaResults[0].total) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detailed-results" *ngIf="showDetails">
+            <div class="iva-breakdown">
+              <div class="breakdown-item">
+                <span class="breakdown-label">Subtotal:</span>
+                <span class="breakdown-value">{{ formatCurrency(ivaResults[0].subtotal) }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="breakdown-label">IVA ({{ formatPercentage(ivaResults[0].rate * 100) }}):</span>
+                <span class="breakdown-value">{{ formatCurrency(ivaResults[0].iva) }}</span>
+              </div>
+              <div class="breakdown-item total">
+                <span class="breakdown-label">Total:</span>
+                <span class="breakdown-value">{{ formatCurrency(ivaResults[0].total) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

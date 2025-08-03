@@ -1,0 +1,606 @@
+<div class="sueldos-container">
+  <!-- Header -->
+  <header class="sueldos-header">
+    <div class="header-content">
+      <div class="header-left">
+        <!-- <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button> -->
+        <div class="header-title">
+          <h1>Gestión de Sueldos</h1>
+          <p>Administración completa de nómina y compensaciones</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="export-button" (click)="exportPayroll()">
+          <i class="fas fa-download"></i>
+          <span>Exportar Nómina</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Statistics Overview -->
+  <section class="stats-overview" *ngIf="activeTab === 'overview'">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalEmployees }}</h3>
+          <p>Empleados Activos</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatCurrency(totalPayroll) }}</h3>
+          <p>Nómina Total</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatCurrency(averageSalary) }}</h3>
+          <p>Salario Promedio</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ pendingPayments }}</h3>
+          <p>Pagos Pendientes</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-navigation">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'overview'"
+      (click)="setActiveTab('overview')"
+    >
+      <i class="fas fa-chart-pie"></i>
+      <span>Resumen</span>
+    </button>
+    
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'payroll'"
+      (click)="setActiveTab('payroll')"
+    >
+      <i class="fas fa-file-invoice-dollar"></i>
+      <span>Nómina</span>
+    </button>
+    
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'config'"
+      (click)="setActiveTab('config')"
+    >
+      <i class="fas fa-cog"></i>
+      <span>Configuración</span>
+    </button>
+    
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'reports'"
+      (click)="setActiveTab('reports')"
+    >
+      <i class="fas fa-chart-bar"></i>
+      <span>Reportes</span>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="sueldos-main">
+    <!-- Payroll Section -->
+    <section class="payroll-section" *ngIf="activeTab === 'payroll'">
+      <div class="section-header">
+        <h2>Registro de Nómina</h2>
+        <p>Gestiona los pagos de sueldos y compensaciones</p>
+      </div>
+
+      <!-- Salary Form -->
+      <div class="form-container">
+        <form [formGroup]="salaryForm" (ngSubmit)="onSubmitSalary()" class="salary-form">
+          <div class="form-section-title">
+            <i class="fas fa-plus-circle"></i>
+            <h3>Nuevo Registro de Sueldo</h3>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="employeeId">Empleado *</label>
+              <div class="input-container">
+                <i class="fas fa-user"></i>
+                <select id="employeeId" formControlName="employeeId">
+                  <option value="">Seleccionar empleado</option>
+                  <option *ngFor="let employee of employees" [value]="employee.id">
+                    {{ employee.firstName }} {{ employee.lastName }} - {{ employee.employeeNumber }}
+                  </option>
+                </select>
+              </div>
+              <div class="error-message" *ngIf="salaryForm.get('employeeId')?.invalid && salaryForm.get('employeeId')?.touched">
+                <span>Selecciona un empleado</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="month">Mes *</label>
+              <div class="input-container">
+                <i class="fas fa-calendar"></i>
+                <select id="month" formControlName="month">
+                  <option value="">Seleccionar mes</option>
+                  <option *ngFor="let month of months" [value]="month.value">
+                    {{ month.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="error-message" *ngIf="salaryForm.get('month')?.invalid && salaryForm.get('month')?.touched">
+                <span>Selecciona un mes</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="year">Año *</label>
+              <div class="input-container">
+                <i class="fas fa-calendar-alt"></i>
+                <select id="year" formControlName="year">
+                  <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="baseSalary">Salario Base *</label>
+              <div class="input-container">
+                <i class="fas fa-dollar-sign"></i>
+                <input 
+                  type="number" 
+                  id="baseSalary"
+                  formControlName="baseSalary"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+              <div class="error-message" *ngIf="salaryForm.get('baseSalary')?.invalid && salaryForm.get('baseSalary')?.touched">
+                <span>El salario base es requerido</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bonuses">Bonos</label>
+              <div class="input-container">
+                <i class="fas fa-gift"></i>
+                <input 
+                  type="number" 
+                  id="bonuses"
+                  formControlName="bonuses"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="overtime">Horas Extra</label>
+              <div class="input-container">
+                <i class="fas fa-clock"></i>
+                <input 
+                  type="number" 
+                  id="overtime"
+                  formControlName="overtime"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="deductions">Deducciones</label>
+              <div class="input-container">
+                <i class="fas fa-minus-circle"></i>
+                <input 
+                  type="number" 
+                  id="deductions"
+                  formControlName="deductions"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Notas</label>
+            <div class="input-container">
+              <i class="fas fa-sticky-note"></i>
+              <textarea 
+                id="notes"
+                formControlName="notes"
+                placeholder="Notas adicionales sobre el pago..."
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-button" [disabled]="salaryForm.invalid">
+              <i class="fas fa-save"></i>
+              <span>Registrar Sueldo</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section">
+        <div class="filters-header">
+          <h3>Filtros</h3>
+          <button class="clear-filters" (click)="clearFilters()">
+            <i class="fas fa-times"></i>
+            <span>Limpiar</span>
+          </button>
+        </div>
+
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label>Mes:</label>
+            <select [(ngModel)]="selectedMonth">
+              <option value="">Todos los meses</option>
+              <option *ngFor="let month of months" [value]="month.value">
+                {{ month.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Año:</label>
+            <select [(ngModel)]="selectedYear">
+              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Departamento:</label>
+            <select [(ngModel)]="selectedDepartment">
+              <option value="">Todos los departamentos</option>
+              <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Estado:</label>
+            <select [(ngModel)]="selectedStatus">
+              <option value="">Todos los estados</option>
+              <option value="pending">Pendiente</option>
+              <option value="paid">Pagado</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Salary Records List -->
+      <div class="records-section">
+        <h3>Registros de Nómina</h3>
+        
+        <div class="records-list">
+          <div 
+            class="record-item" 
+            *ngFor="let record of getFilteredSalaryRecords()"
+            [class]="'record-' + record.status"
+          >
+            <div class="record-header">
+              <div class="employee-info">
+                <h4>{{ record.employeeName }}</h4>
+                <span class="employee-number">#{{ record.employeeNumber }}</span>
+              </div>
+              <div class="record-period">
+                <span class="period">{{ getMonthName(record.month) }} {{ record.year }}</span>
+                <span class="status-badge" [class]="'status-' + getStatusColor(record.status)">
+                  {{ getStatusText(record.status) }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="record-details">
+              <div class="detail-row">
+                <span class="detail-label">Salario Base:</span>
+                <span class="detail-value">{{ formatCurrency(record.baseSalary) }}</span>
+              </div>
+              
+              <div class="detail-row">
+                <span class="detail-label">Bonos:</span>
+                <span class="detail-value bonus">{{ formatCurrency(record.bonuses) }}</span>
+              </div>
+              
+              <div class="detail-row">
+                <span class="detail-label">Horas Extra:</span>
+                <span class="detail-value overtime">{{ formatCurrency(record.overtime) }}</span>
+              </div>
+              
+              <div class="detail-row">
+                <span class="detail-label">Deducciones:</span>
+                <span class="detail-value deduction">{{ formatCurrency(record.deductions) }}</span>
+              </div>
+              
+              <div class="detail-row total">
+                <span class="detail-label">Total:</span>
+                <span class="detail-value total-salary">{{ formatCurrency(record.totalSalary) }}</span>
+              </div>
+            </div>
+            
+            <div class="record-actions">
+              <button 
+                class="action-button status" 
+                (click)="updateSalaryStatus(record.id, 'paid')"
+                *ngIf="record.status === 'pending'"
+                title="Marcar como pagado"
+              >
+                <i class="fas fa-check"></i>
+              </button>
+              
+              <button 
+                class="action-button status" 
+                (click)="updateSalaryStatus(record.id, 'cancelled')"
+                *ngIf="record.status === 'pending'"
+                title="Cancelar pago"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+              
+              <button 
+                class="action-button delete" 
+                (click)="deleteSalaryRecord(record.id)"
+                title="Eliminar registro"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="no-records" *ngIf="getFilteredSalaryRecords().length === 0">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <p>No hay registros de nómina</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Configuration Section -->
+    <section class="config-section" *ngIf="activeTab === 'config'">
+      <div class="section-header">
+        <h2>Configuración de Sueldos</h2>
+        <p>Gestiona bonos, deducciones y configuraciones de nómina</p>
+      </div>
+
+      <!-- Config Form -->
+      <div class="form-container">
+        <form [formGroup]="configForm" (ngSubmit)="onSubmitConfig()" class="config-form">
+          <div class="form-section-title">
+            <i class="fas fa-cog"></i>
+            <h3>Nueva Configuración</h3>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="configName">Nombre *</label>
+              <div class="input-container">
+                <i class="fas fa-tag"></i>
+                <input 
+                  type="text" 
+                  id="configName"
+                  formControlName="name"
+                  placeholder="Ej: Bono de Productividad"
+                >
+              </div>
+              <div class="error-message" *ngIf="configForm.get('name')?.invalid && configForm.get('name')?.touched">
+                <span>El nombre es requerido</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="configType">Tipo *</label>
+              <div class="input-container">
+                <i class="fas fa-list"></i>
+                <select id="configType" formControlName="type">
+                  <option value="bonus">Bono</option>
+                  <option value="deduction">Deducción</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="configAmount">Cantidad *</label>
+              <div class="input-container">
+                <i class="fas fa-calculator"></i>
+                <input 
+                  type="number" 
+                  id="configAmount"
+                  formControlName="amount"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+              <div class="error-message" *ngIf="configForm.get('amount')?.invalid && configForm.get('amount')?.touched">
+                <span>La cantidad es requerida</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="configPercentage">Es Porcentaje</label>
+              <div class="checkbox-container">
+                <input 
+                  type="checkbox" 
+                  id="configPercentage"
+                  formControlName="percentage"
+                >
+                <label for="configPercentage">Aplicar como porcentaje del salario base</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="configDescription">Descripción</label>
+            <div class="input-container">
+              <i class="fas fa-align-left"></i>
+              <textarea 
+                id="configDescription"
+                formControlName="description"
+                placeholder="Descripción de la configuración..."
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-button" [disabled]="configForm.invalid">
+              <i class="fas fa-save"></i>
+              <span>Crear Configuración</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Configurations List -->
+      <div class="configs-section">
+        <h3>Configuraciones Existentes</h3>
+        
+        <div class="configs-list">
+          <div 
+            class="config-item" 
+            *ngFor="let config of salaryConfigs"
+            [class]="'config-' + config.type"
+          >
+            <div class="config-header">
+              <div class="config-info">
+                <h4>{{ config.name }}</h4>
+                <span class="config-type" [class]="'type-' + config.type">
+                  {{ config.type === 'bonus' ? 'Bono' : 'Deducción' }}
+                </span>
+              </div>
+              <div class="config-amount">
+                <span class="amount-value">
+                  {{ config.percentage ? config.amount + '%' : formatCurrency(config.amount) }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="config-description">
+              <p>{{ config.description || 'Sin descripción' }}</p>
+            </div>
+            
+            <div class="config-actions">
+              <button 
+                class="action-button delete" 
+                (click)="deleteConfig(config.id)"
+                title="Eliminar configuración"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="no-configs" *ngIf="salaryConfigs.length === 0">
+            <i class="fas fa-cog"></i>
+            <p>No hay configuraciones de sueldo</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section class="reports-section" *ngIf="activeTab === 'reports'">
+      <div class="section-header">
+        <h2>Reportes de Nómina</h2>
+        <p>Genera reportes detallados de sueldos y compensaciones</p>
+      </div>
+
+      <div class="reports-grid">
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-file-pdf"></i>
+          </div>
+          <h3>Reporte Mensual</h3>
+          <p>Genera un reporte completo de nómina del mes seleccionado</p>
+          <div class="report-filters" style="margin-bottom: 10px;">
+            <label style="margin-right: 5px;">Mes:</label>
+            <select [(ngModel)]="selectedMonth" style="margin-right: 10px;">
+              <option value="">Selecciona mes</option>
+              <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
+            </select>
+            <label style="margin-right: 5px;">Año:</label>
+            <select [(ngModel)]="selectedYear">
+              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+          <button class="report-button" (click)="exportMonthlyReport()">
+            <i class="fas fa-download"></i>
+            <span>Generar Reporte</span>
+          </button>
+        </div>
+
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <h3>Análisis de Costos</h3>
+          <p>Reporte detallado de costos</p>
+          <button class="report-button" (click)="exportCostAnalysis()">
+            <i class="fas fa-download"></i>
+            <span>Generar Reporte</span>
+          </button>
+        </div>
+
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <h3>Reporte Anual</h3>
+          <p>Resumen anual de todos los pagos y compensaciones</p>
+          <button class="report-button" (click)="exportAnnualReport()">
+            <i class="fas fa-download"></i>
+            <span>Generar Reporte</span>
+          </button>
+        </div>
+
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Reporte por Empleado</h3>
+          <p>Historial completo de un empleado específico</p>
+          <button class="report-button" (click)="exportEmployeeReport()">
+            <i class="fas fa-download"></i>
+            <span>Generar Reporte</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

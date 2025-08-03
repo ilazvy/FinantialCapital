@@ -1,0 +1,109 @@
+<aside class="app-sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-container">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <button class="toggle-button" (click)="toggleSidebar()" title="Toggle Sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="sidebar-brand" *ngIf="!isCollapsed">
+        <div class="brand-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+        <div class="brand-text">
+          <h3>Finantial</h3>
+          <span>Capital</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+      <ul class="nav-menu">
+        <li class="nav-item" *ngFor="let item of getVisibleMenuItems()">
+          <!-- Menu Item with Children -->
+          <div 
+            class="nav-link" 
+            *ngIf="item.children && item.children.length > 0"
+            [class.active]="isRouteActive(item.route)"
+            [class.expanded]="item.expanded"
+            (click)="onMenuItemClick(item, $event)"
+          >
+            <div class="nav-icon">
+              <i [class]="item.icon"></i>
+            </div>
+            <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+            <div class="nav-badge" *ngIf="item.badge && !isCollapsed">
+              <span [style.background-color]="getBadgeColor(item.badgeColor || 'success')">
+                {{ item.badge }}
+              </span>
+            </div>
+            <div class="nav-arrow" *ngIf="!isCollapsed">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </div>
+
+          <!-- Menu Item without Children -->
+          <a 
+            class="nav-link" 
+            *ngIf="!item.children || item.children.length === 0"
+            [class.active]="isRouteActive(item.route)"
+            (click)="onMenuItemClick(item, $event)"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+          >
+            <div class="nav-icon">
+              <i [class]="item.icon"></i>
+            </div>
+            <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+            <div class="nav-badge" *ngIf="item.badge && !isCollapsed">
+              <span [style.background-color]="getBadgeColor(item.badgeColor || 'success')">
+                {{ item.badge }}
+              </span>
+            </div>
+          </a>
+
+          <!-- Submenu -->
+          <ul class="submenu" *ngIf="item.children && item.children.length > 0 && item.expanded && !isCollapsed">
+            <li class="submenu-item" *ngFor="let child of item.children">
+              <a 
+                class="submenu-link"
+                [class.active]="isRouteActive(child.route)"
+                (click)="onChildItemClick(child, $event)"
+                [routerLink]="child.route"
+                routerLinkActive="active"
+              >
+                <div class="submenu-icon">
+                  <i [class]="child.icon"></i>
+                </div>
+                <span class="submenu-label">{{ child.label }}</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer" *ngIf="!isCollapsed">
+      <div class="footer-content">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ userRole === 'admin' ? 'Administrador' : 'Empleado' }}</span>
+            <span class="user-status">En línea</span>
+          </div>
+        </div>
+        <div class="footer-actions">
+          <button class="footer-button" title="Configuración">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button class="footer-button" title="Ayuda">
+            <i class="fas fa-question-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
