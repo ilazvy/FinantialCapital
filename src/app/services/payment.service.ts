@@ -77,7 +77,7 @@ export class PaymentService {
 
   // updateSeverancePayment(id: number, severancePayment: SeverancePayment): Observable<SeverancePayment> {
   //   return this.apiService.put<SeverancePayment>(`/severance-payments/${id}`, severancePayment);
-  // }
+  // update of the code}
 
   deleteSeverancePayment(id: number): Observable<void> {
     return this.apiService.delete<void>(`/severance-payments/${id}`);
