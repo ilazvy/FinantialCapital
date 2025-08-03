@@ -66,8 +66,7 @@ export class FinancialService {
     return this.apiService.get<number>('/income/total');
   }
 
-  // Expenses
-  getAllExpenses(): Observable<Expense[]> {
+   getAllExpenses(): Observable<Expense[]> {
     return this.apiService.get<Expense[]>('/expenses');
   }
 
