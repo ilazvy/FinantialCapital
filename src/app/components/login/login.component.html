@@ -12,15 +12,13 @@
       </div>
     </div>
 
-    <!-- Formulario de Login -->
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-header">
         <h2>Iniciar Sesión</h2>
         <p>Accede a tu cuenta</p>
       </div>
 
-      <!-- Campo Email -->
-      <div class="form-group">
+       <div class="form-group">
         <label for="email">Correo Electrónico</label>
         <div class="input-container">
           <i class="fas fa-envelope input-icon"></i>
@@ -38,8 +36,7 @@
         </div>
       </div>
 
-      <!-- Campo Contraseña -->
-      <div class="form-group">
+       <div class="form-group">
         <label for="password">Contraseña</label>
         <div class="input-container">
           <i class="fas fa-lock input-icon"></i>
@@ -64,8 +61,7 @@
         </div>
       </div>
 
-      <!-- Selector de Rol -->
-      <div class="form-group">
+       <div class="form-group">
         <label for="role">Rol</label>
         <div class="input-container">
           <i class="fas fa-user-tag input-icon"></i>
@@ -76,8 +72,7 @@
         </div>
       </div>
 
-      <!-- CAPTCHA -->
-      <div class="form-group">
+       <div class="form-group">
         <label for="captcha">CAPTCHA</label>
         <div class="captcha-container">
           <div class="captcha-display">
@@ -103,20 +98,17 @@
         </div>
       </div>
 
-      <!-- Información de intentos -->
-      <div class="attempts-info" *ngIf="loginAttempts > 0">
+       <div class="attempts-info" *ngIf="loginAttempts > 0">
         <i class="fas fa-exclamation-triangle"></i>
         <span>Intentos restantes: {{ getRemainingAttempts() }}</span>
       </div>
 
-      <!-- Mensaje de bloqueo -->
-      <div class="block-message" *ngIf="isBlocked">
+       <div class="block-message" *ngIf="isBlocked">
         <i class="fas fa-ban"></i>
         <span>Cuenta bloqueada temporalmente por múltiples intentos fallidos</span>
       </div>
 
-      <!-- Botón de envío -->
-      <button 
+       <button 
         type="submit" 
         class="login-button"
         [disabled]="loginForm.invalid || isBlocked || isLoading"
@@ -128,8 +120,7 @@
         </div>
       </button>
 
-      <!-- Credenciales de ejemplo -->
-      <div class="demo-credentials">
+       <div class="demo-credentials">
         <h4>Credenciales de Demo:</h4>
         <div class="credential-item">
           <strong>Admin:</strong> admin@financial.com / admin123
@@ -141,8 +132,7 @@
     </form>
   </div>
 
-  <!-- Efectos de sonido (simulado) -->
-  <audio id="cashRegisterSound" preload="auto">
+   <audio id="cashRegisterSound" preload="auto">
     <source src="assets/sounds/cash-register.mp3" type="audio/mpeg">
   </audio>
 </div>
