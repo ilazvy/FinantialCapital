@@ -22,7 +22,7 @@ export class LoadingService {
     this.isLoadingSubject.next(false);
   }
 
-  // Métodos específicos para diferentes acciones
+  // Métodos específicos para diferentes acciones update
   showNavigation() {
     this.show('Navegando...');
   }
