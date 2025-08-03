@@ -10,7 +10,7 @@
   overflow: hidden;
 }
 
-/* Efectos de fondo animados */
+/* Efectos de fondo animados del contenedor*/
 .login-container::before {
   content: '';
   position: absolute;
