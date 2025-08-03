@@ -11,8 +11,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  // Generic methods
-  get<T>(endpoint: string): Observable<T> {
+   get<T>(endpoint: string): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`);
   }
 
